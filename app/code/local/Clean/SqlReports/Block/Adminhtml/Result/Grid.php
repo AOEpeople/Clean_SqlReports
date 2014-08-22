@@ -41,29 +41,49 @@ class Clean_SqlReports_Block_Adminhtml_Result_Grid extends Mage_Adminhtml_Block_
 
     protected function _prepareColumns()
     {
-        $rawColumnConfig = explode("\n", $this->getResult()->getColumnConfig());
-        foreach ($rawColumnConfig as $entry) {
-            $entry = explode(':', trim($entry));
-            if(empty($entry[0])) {
-                continue;
+        $columnConfig = array();
+
+        // Parse the column config
+        $rawColumnConfig = trim($this->getResult()->getColumnConfig());
+        if($rawColumnConfig[0] === '{') {
+            try {
+                $columnConfig = Zend_Json::decode($rawColumnConfig);
+            } catch(Zend_Json_Exception $e) {
+                Mage::logException($e);
+                Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
             }
-            $columnConfig[$entry[0]] = array(
-                'type'   => (isset($entry[1]) && !empty($entry[1]) ? $entry[1] : null),
-                'name'   => (isset($entry[2]) && !empty($entry[2]) ? $entry[2] : null),
-                'filter' => (isset($entry[3]) ? (bool)$entry[3] : true),
-                'sort'   => (isset($entry[4]) ? (bool)$entry[4] : true),
-            );
+        } else {
+            $rawColumnConfig = array_filter(array_map('trim', explode("\n", str_replace(',', "\n", $rawColumnConfig))));
+            foreach ($rawColumnConfig as $entry) {
+                $entry = explode(':', trim($entry));
+                if(empty($entry[0])) {
+                    continue;
+                }
+                $columnConfig[$entry[0]] = array(
+                    'type'   => (isset($entry[1]) && !empty($entry[1]) ? $entry[1] : null),
+                    'name'   => (isset($entry[2]) && !empty($entry[2]) ? $entry[2] : null),
+                    'filter' => (isset($entry[3]) ? (bool)$entry[3] : true),
+                    'sort'   => (isset($entry[4]) ? (bool)$entry[4] : true),
+                );
+            }
         }
 
         /** @var Varien_Db_Adapter_Interface $connection */
         $connection = $this->getResult()->getResource()->getReadConnection();
         $tableInfo = $connection->describeTable($this->getResult()->getResultTable());
         foreach ($tableInfo as $columnKey => $columnData) {
-            $type = (isset($columnConfig[$columnKey]['type']) ? $columnConfig[$columnKey]['type'] : $this->mapDdlTypeToColumnType($columnData['DATA_TYPE']));
-            $header = (isset($columnConfig[$columnKey]['name']) ? $columnConfig[$columnKey]['name'] : Mage::helper('core')->__($columnKey));
-            $filter = (isset($columnConfig[$columnKey]['filter']) && !$columnConfig[$columnKey]['filter'] ? false : null);
-            $sortable = (isset($columnConfig[$columnKey]['sort']) ? $columnConfig[$columnKey]['sort'] : true);
-            $this->addColumn($columnKey, array('type' => $type, 'header' => $header, 'index' => $columnKey, 'filter' => $filter, 'sortable' => $sortable));
+            // Load column config
+            $config = (isset($columnConfig[$columnKey]) ? $columnConfig[$columnKey] : array());
+
+            // Ensure these base settings are defined
+            $config['index'] = $columnKey;
+            $config['type'] = (isset($columnConfig[$columnKey]['type']) ? $columnConfig[$columnKey]['type'] : $this->mapDdlTypeToColumnType($columnData['DATA_TYPE']));
+            $config['header'] = (isset($columnConfig[$columnKey]['name']) ? $columnConfig[$columnKey]['name'] : Mage::helper('core')->__($columnKey));
+            $config['filter'] = (isset($columnConfig[$columnKey]['filter']) && !$columnConfig[$columnKey]['filter'] ? false : null);
+            $config['sortable'] = (isset($columnConfig[$columnKey]['sort']) ? $columnConfig[$columnKey]['sort'] : true);
+
+            // Add column
+            $this->addColumn($columnKey, $config);
         }
 
         return parent::_prepareColumns();
