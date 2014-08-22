@@ -62,7 +62,7 @@ class Clean_SqlReports_Block_Adminhtml_Result_Grid extends Mage_Adminhtml_Block_
                 $columnConfig[$entry[0]] = array(
                     'type'   => (isset($entry[1]) && !empty($entry[1]) ? $entry[1] : null),
                     'name'   => (isset($entry[2]) && !empty($entry[2]) ? $entry[2] : null),
-                    'filter' => (isset($entry[3]) ? (bool)$entry[3] : true),
+                    'filter' => (isset($entry[3]) ? (bool)$entry[3] : null),
                     'sort'   => (isset($entry[4]) ? (bool)$entry[4] : true),
                 );
             }
