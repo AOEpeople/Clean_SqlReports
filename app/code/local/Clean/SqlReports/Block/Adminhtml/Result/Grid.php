@@ -77,10 +77,46 @@ class Clean_SqlReports_Block_Adminhtml_Result_Grid extends Mage_Adminhtml_Block_
 
             // Ensure these base settings are defined
             $config['index'] = $columnKey;
-            $config['type'] = (isset($columnConfig[$columnKey]['type']) ? $columnConfig[$columnKey]['type'] : $this->mapDdlTypeToColumnType($columnData['DATA_TYPE']));
-            $config['header'] = (isset($columnConfig[$columnKey]['name']) ? $columnConfig[$columnKey]['name'] : Mage::helper('core')->__($columnKey));
-            $config['filter'] = (isset($columnConfig[$columnKey]['filter']) && !$columnConfig[$columnKey]['filter'] ? false : null);
-            $config['sortable'] = (isset($columnConfig[$columnKey]['sort']) ? $columnConfig[$columnKey]['sort'] : true);
+            $config['type'] = (isset($config['type']) ? $config['type'] : $this->mapDdlTypeToColumnType($columnData['DATA_TYPE']));
+            $config['header'] = (isset($config['name']) ? $config['name'] : Mage::helper('core')->__($columnKey));
+            $config['sortable'] = (isset($config['sort']) ? (bool)$config['sort'] : true);
+            if(isset($config['filter']) && !$config['filter']) {
+                $config['filter'] = false;
+            }
+
+            if($config['type'] === 'select') {
+                $config['type'] = 'options';
+            }
+            if (isset($config['source'])) {
+                if (preg_match("/^(helper|model|collection):([^:]+)(?:::(.+))?$/", trim($config['source']), $matches)) {
+                    $sourceType = $matches[1];
+                    $sourceAlias = $matches[2];
+                    $sourceMethod = (isset($matches[3]) ? $matches[3] : 'toOptionHash');
+                    $sourceObject = null;
+                    switch ($sourceType) {
+                        case 'helper':
+                            $sourceObject = Mage::helper($sourceAlias);
+                            break;
+                        case 'model':
+                            $sourceObject = Mage::getSingleton($sourceAlias);
+                            break;
+                        case 'collection':
+                            $sourceObject = Mage::getSingleton($sourceAlias);
+                            if ($sourceObject && method_exists($sourceObject, 'getCollection')) {
+                                $sourceObject = $sourceObject->getCollection();
+                            } else {
+                                $sourceObject = null;
+                            }
+                            break;
+                    }
+
+                    if ($sourceObject && method_exists($sourceObject, $sourceMethod)) {
+                        $config['options'] = $sourceObject->$sourceMethod();
+                    }
+                }
+
+                unset($config['source']);
+            }
 
             // Add column
             $this->addColumn($columnKey, $config);
