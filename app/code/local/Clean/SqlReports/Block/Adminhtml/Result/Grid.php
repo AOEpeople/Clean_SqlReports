@@ -45,7 +45,7 @@ class Clean_SqlReports_Block_Adminhtml_Result_Grid extends Mage_Adminhtml_Block_
 
         // Parse the column config
         $rawColumnConfig = trim($this->getResult()->getColumnConfig());
-        if($rawColumnConfig[0] === '{') {
+        if(strlen($rawColumnConfig) > 0 && $rawColumnConfig[0] === '{') {
             try {
                 $columnConfig = Zend_Json::decode($rawColumnConfig);
             } catch(Zend_Json_Exception $e) {
