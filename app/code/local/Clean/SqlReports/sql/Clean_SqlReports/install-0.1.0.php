@@ -3,6 +3,9 @@
 /** @var $this Mage_Core_Model_Resource_Setup */
 $this->startSetup();
 
+Mage::log('Clean_SqlReports/install-0.1.0.php');
+file_put_contents('/tmp/install.log', time() . " Clean_SqlReports/install-0.1.0.php\n", FILE_APPEND);
+
 $table = $this->getConnection()->newTable($this->getTable('cleansql/report'));
 $table->addColumn(
     'report_id',
