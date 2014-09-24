@@ -28,6 +28,7 @@ class Clean_SqlReports_Model_Report extends Mage_Core_Model_Abstract
      * Run this report
      *
      * @param array $data
+     *
      * @return Clean_SqlReports_Model_Result
      *
      * @author Lee Saferite <lee.saferite@aoe.com>
@@ -59,14 +60,27 @@ class Clean_SqlReports_Model_Report extends Mage_Core_Model_Abstract
      */
     public function hasReportingPeriod()
     {
-        $reportSql = $this->getSqlQuery();
+        return ($this->hasReportingStartDate() || $this->hasReportingStopDate());
+    }
 
-        if (strpos($reportSql, '@start_date') !== false
-            || strpos($reportSql, '@end_date') !== false
-        ) {
-            return true;
-        }
-        return false;
+    /**
+     * Check if the report sql contains reporting period variables
+     *
+     * @return bool
+     */
+    public function hasReportingStartDate()
+    {
+        return (strpos($this->getSqlQuery(), '@start_date') !== false);
+    }
+
+    /**
+     * Check if the report sql contains reporting period variables
+     *
+     * @return bool
+     */
+    public function hasReportingStopDate()
+    {
+        return (strpos($this->getSqlQuery(), '@end_date') !== false);
     }
 
     /**
