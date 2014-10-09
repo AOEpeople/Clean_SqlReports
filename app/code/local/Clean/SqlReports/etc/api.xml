@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<config>
+    <api>
+        <resources>
+            <cleansql translate="title" module="cleansql">
+                <model>cleansql/api</model>
+                <title>SQL Reports API</title>
+                <acl>cleansql</acl>
+                <methods>
+                    <listReports translate="title" module="cleansql">
+                        <title>List reports</title>
+                        <acl>cleansql</acl>
+                    </listReports>
+                    <runReport translate="title" module="cleansql">
+                        <title>Run a report</title>
+                        <acl>cleansql</acl>
+                    </runReport>
+                    <listResults translate="title" module="cleansql">
+                        <title>List the results for a report</title>
+                        <acl>cleansql</acl>
+                    </listResults>
+                    <downloadResult translate="title" module="cleansql">
+                        <title>Download a report result</title>
+                        <acl>cleansql</acl>
+                    </downloadResult>
+                </methods>
+            </cleansql>
+        </resources>
+        <faults>
+            <report_not_found>
+                <code>9000</code>
+                <message>Report not found.</message>
+            </report_not_found>
+            <report_start_date_missing>
+                <code>9001</code>
+                <message>Report requires a start date to run.</message>
+            </report_start_date_missing>
+            <report_stop_date_missing>
+                <code>9002</code>
+                <message>Report requires a stop date to run.</message>
+            </report_stop_date_missing>
+            <result_not_found>
+                <code>9010</code>
+                <message>Result not found.</message>
+            </result_not_found>
+        </faults>
+        <acl>
+            <resources>
+                <cleansql translate="title" module="cleansql">
+                    <title>SQL Reports API</title>
+                </cleansql>
+            </resources>
+        </acl>
+    </api>
+</config>
