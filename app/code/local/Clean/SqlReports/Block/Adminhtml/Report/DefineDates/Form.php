@@ -46,19 +46,18 @@ class Clean_SqlReports_Block_Adminhtml_Report_DefineDates_Form extends Mage_Admi
             'legend'    => Mage::helper('core')->__('Dates'),
         ));
 
-        $dateFormatIso = Mage::app()->getLocale()->getDateFormat(Mage_Core_Model_Locale::FORMAT_TYPE_SHORT);
         $fieldset->addField('start_date', 'date', array(
             'name'      => 'start_date',
             'label'     => $this->_getHelper()->__('Start Date'),
             'image'     => $this->getSkinUrl('images/grid-cal.gif'),
-            'format'    => $dateFormatIso,
+            'format'    => Varien_Date::DATE_INTERNAL_FORMAT,
         ));
 
         $fieldset->addField('end_date', 'date', array(
             'name'      => 'end_date',
             'label'     => $this->_getHelper()->__('End Date'),
             'image'     => $this->getSkinUrl('images/grid-cal.gif'),
-            'format'    => $dateFormatIso,
+            'format'    => Varien_Date::DATE_INTERNAL_FORMAT,
         ));
     }
 }
