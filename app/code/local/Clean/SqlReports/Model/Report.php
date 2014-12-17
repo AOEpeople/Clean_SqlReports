@@ -39,7 +39,9 @@ class Clean_SqlReports_Model_Report extends Mage_Core_Model_Abstract
         $result = Mage::getModel('cleansql/result');
         $result->setReportId($this->getId());
         $result->setColumnConfig($this->getColumnConfig());
-        $result->setCreatedAt(Mage::app()->getLocale()->storeDate(null, null, true));
+
+        $createdAt = Mage::getSingleton('core/date')->gmtDate();
+        $result->setCreatedAt($createdAt);
 
         if (isset($data['start_date'])) {
             $result->setStartDate($data['start_date']);
