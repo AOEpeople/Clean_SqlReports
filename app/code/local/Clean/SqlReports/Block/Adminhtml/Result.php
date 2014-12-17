@@ -4,7 +4,8 @@ class Clean_SqlReports_Block_Adminhtml_Result extends Mage_Adminhtml_Block_Widge
 {
     public function __construct()
     {
-        $this->_headerText = sprintf('Report: %s<br/>Run: %s',$this->getResult()->getReport()->getTitle(), $this->getResult()->getCreatedAt());
+        $createdAt = Mage::getModel('core/date')->date('Y-m-d H:i:s',strtotime($this->getResult()->getCreatedAt()));
+        $this->_headerText = sprintf('Report: %s<br/>Run: %s',$this->getResult()->getReport()->getTitle(), $createdAt);
 
         if ($this->getResult()->hasStartDate() || $this->getResult()->hasEndDate()) {
             $this->_headerText .= sprintf(
