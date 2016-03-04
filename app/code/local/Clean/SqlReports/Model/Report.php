@@ -44,10 +44,12 @@ class Clean_SqlReports_Model_Report extends Mage_Core_Model_Abstract
         $result->setCreatedAt($createdAt);
 
         if (isset($data['start_date'])) {
-            $result->setStartDate($data['start_date']);
+            $startDate = Mage::getModel('core/date')->date('Y-m-d',strtotime($data['start_date']));
+            $result->setStartDate($startDate);
         }
         if (isset($data['end_date'])) {
-            $result->setEndDate($data['end_date']);
+            $endDate = Mage::getModel('core/date')->date('Y-m-d',strtotime($data['end_date']));
+            $result->setEndDate($endDate);
         }
 
         $result->save();
