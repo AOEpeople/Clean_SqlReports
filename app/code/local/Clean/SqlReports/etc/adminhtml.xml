@@ -39,6 +39,14 @@
                                         <title>Run Reports</title>
                                         <sort_order>10</sort_order>
                                     </run>
+                                    <reports>
+                                        <title>Reports Section</title>
+                                        <sort_order>20</sort_order>
+                                    </reports>
+                                    <charts>
+                                        <title>Charts Section</title>
+                                        <sort_order>30</sort_order>
+                                    </charts>
                                 </children>
                             </cleansql>
                         </children>
